@@ -1,1 +1,37 @@
-<!doctype html><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>BOARD</title><p style="font:16px -apple-system;padding:40px">BOARD phone app is on its way.</p>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>BOARD</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="BOARD">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#f6f7f9">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-180.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="phone.css">
+</head>
+<body>
+<header id="bar">
+  <button id="back" type="button" aria-label="Back" hidden>‹</button>
+  <div id="title">BOARD</div>
+  <span id="status" data-s="synced" aria-hidden="true"></span>
+  <button id="trayBtn" type="button" hidden>Unsorted</button>
+  <button id="viewBtn" type="button">List</button>
+  <button id="menuBtn" type="button" aria-label="Menu">•••</button>
+</header>
+<main id="screen"></main>
+<button id="addBtn" type="button" aria-label="Add">+</button>
+<input id="photoInput" type="file" accept="image/*" multiple hidden>
+<div id="shade" hidden></div>
+<section id="sheet" hidden><div id="sheetBody"></div></section>
+<div id="viewer" hidden><img id="viewerImg" alt=""><div id="viewerCap"></div></div>
+<div id="gate" hidden></div>
+<div id="toast" hidden></div>
+<script src="fflate.js"></script>
+<script src="phone.js"></script>
+</body>
+</html>
