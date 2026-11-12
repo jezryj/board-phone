@@ -64,7 +64,7 @@
     const q = new URLSearchParams({ client_id: APP_KEY, response_type: 'code', code_challenge: challenge, code_challenge_method: 'S256', token_access_type: 'offline' });
     if (!byCode) q.set('redirect_uri', REDIRECT);
     const url = HOST.www + '/oauth2/authorize?' + q;
-    if (byCode) { window.open(url, '_blank'); showCodeBox(); } else location.href = url;
+    if (byCode) { showCodeBox(url); } else location.href = url;
   }
   async function finishSignIn(code) {
     const p = store.get('board.pkce'); if (!p) throw new Error('Start the sign-in again.');
@@ -668,13 +668,15 @@
   function showSignIn() {
     gate.hidden = false; gate.textContent = '';
     gate.append(h('div', 'gtitle', 'BOARD'), h('div', 'gnote', 'Your boards from the Mac, on your phone. Sign in to the Dropbox that holds your BOARD folder.'));
-    const go = btn('Sign in with Dropbox', 'primary big', () => startSignIn(standalone()));
+    const go = btn('Sign in with Dropbox', 'primary big', () => startSignIn(false)); // same window: inside a Home Screen app this stays in the app, and Dropbox brings you straight back
     gate.append(go);
+    gate.append(btn('Sign in with a code instead', 'quiet', () => startSignIn(true)));
     if (!standalone()) gate.append(h('div', 'gnote small', 'Tip: once you are in, use Share → Add to Home Screen to keep BOARD as an app.'));
   }
-  function showCodeBox() {
+  function showCodeBox(url) {
     gate.hidden = false; gate.textContent = '';
-    gate.append(h('div', 'gtitle', 'Almost there'), h('div', 'gnote', 'Dropbox opened in a new window. Tap Allow, copy the code it shows, then come back here and paste it.'));
+    gate.append(h('div', 'gtitle', 'Sign in with a code'), h('div', 'gnote', 'Tap Open Dropbox, then Allow. Dropbox shows a code: copy it, come back here and paste it below.'));
+    const a = h('a', 'sbtn primary big linkbtn', 'Open Dropbox'); a.href = url; a.target = '_blank'; a.rel = 'noopener'; gate.append(a);
     const inp = h('input', 'urlin'); inp.placeholder = 'Paste the code'; inp.autocapitalize = 'off'; inp.autocomplete = 'off';
     const ok = btn('Continue', 'primary big', async () => { try { await finishSignIn(inp.value); gate.hidden = true; boot(); } catch (e) { toast(e.message); } });
     gate.append(inp, ok, btn('Start again', 'quiet', () => startSignIn(true)));
