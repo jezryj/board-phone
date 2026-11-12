@@ -74,3 +74,4 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 #toast { position: fixed; z-index: 50; left: 50%; bottom: calc(96px + env(safe-area-inset-bottom)); transform: translateX(-50%); background: rgba(20,22,26,.92); color: #fff; padding: 10px 16px; border-radius: 12px; font-size: 14px; max-width: 88vw; text-align: center; }
 [hidden] { display: none !important; }
 .linkbtn { display: grid; place-items: center; text-decoration: none; }
+.media.nostill { background: #1b1f25; } .media.broken img, img.broken { visibility: hidden; }

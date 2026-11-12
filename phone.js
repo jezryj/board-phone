@@ -285,10 +285,11 @@
           let blob = await DB.get('blobs', job.key);
           if (!blob) {
             const ext = (job.src.split('.').pop() || '').toLowerCase();
-            const thumbable = /^(jpe?g|png|gif|webp|tiff?|bmp|heic|pdf|mp4|mov|m4v)$/.test(ext);
-            const r = thumbable ? await call(HOST.content + '/2/files/get_thumbnail_v2', { method: 'POST', headers: { 'Dropbox-API-Arg': argHeader({ resource: { '.tag': 'path', path: assetPath(job.src) }, format: 'jpeg', size: job.size, mode: 'bestfit' }) } }) : null;
-            if (r && r.ok) blob = await r.blob();
-            else { const d = await download(assetPath(job.src)); blob = d.blob; }
+            const isPicture = /^(jpe?g|png|gif|webp|tiff?|bmp|heic|svg)$/.test(ext);
+            const r = await call(HOST.content + '/2/files/get_thumbnail_v2', { method: 'POST', headers: { 'Dropbox-API-Arg': argHeader({ resource: { '.tag': 'path', path: assetPath(job.src) }, format: 'jpeg', size: job.size, mode: 'bestfit' }) } });
+            if (r.ok) blob = await r.blob();
+            else if (isPicture) { const d = await download(assetPath(job.src)); blob = d.blob; } // never pull a whole video or PDF down just for a picture
+            else throw new Error('no still');
             await DB.put('blobs', job.key, blob);
           }
           const u = URL.createObjectURL(blob); blobUrls.set(job.key, u); job.img.src = u;
@@ -328,7 +329,7 @@
       if (c.caption) add(h('div', 'cap', c.caption));
     } else if (c.type === 'video') {
       const fr = h('div', 'media vid'); fr.style.aspectRatio = String(clamp(c.ar || 16 / 9, 0.3, 4)); const img = h('img'); img.alt = ''; img.loading = 'lazy';
-      const th = c.thumb || (c.provider === 'youtube' ? ytThumb(c.vid) : ''); if (th) pic(img, th); else if (c.provider === 'file' && c.src) pic(img, c.src);
+      const th = c.thumb || (c.provider === 'youtube' ? ytThumb(c.vid) : ''); if (th) pic(img, th); else fr.classList.add('nostill'); // a video file's still is made on the Mac; until then, just the play button
       fr.append(img, h('span', 'play', '▶')); add(fr);
       if (c.title || c.name) add(h('div', 'ltitle', c.title || c.name));
       if (c.summary && c.summary.state === 'done' && c.summary.short) add(h('div', 'vsum', c.summary.short));
